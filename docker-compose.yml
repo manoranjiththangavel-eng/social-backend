@@ -1,0 +1,33 @@
+services:
+
+  mysql:
+    image: mysql:8
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: social_app
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  app:
+    build: .
+    container_name: social-app-container
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/social_app
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 1234
+    volumes:
+      - uploads-data:/app/uploads   # ✅ NEW (persistent file storage)
+
+volumes:
+  mysql-data:
+  
+  uploads-data:
+   # ✅ NEW (volume for images/videos)
